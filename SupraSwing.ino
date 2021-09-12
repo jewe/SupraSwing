@@ -49,7 +49,7 @@ int posHigh = 174;  // servo 0..180
 
 
 RBD::Timer everySecondTimer;
-unsigned long offTime = 30000; // ms blocked
+unsigned long offTime = 80000; // ms blocked
 unsigned long lastHitTimer;
 int everySecond = 0;
 long randNumber;
@@ -69,9 +69,16 @@ void setup() {
   servoB.attach(servoPinB);
   servoC.attach(servoPinC);
 
+  // go to zero position
   servoA.write(posLow);
   servoB.write(posLow);
   servoC.write(posLow);
+
+  // off
+  delay(_delay + 500);
+  servoA.detach();
+  servoB.detach();
+  servoC.detach();
 }
 
 void loop() {
