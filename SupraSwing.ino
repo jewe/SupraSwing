@@ -17,7 +17,9 @@
 
 */
 
-int testMode = 0;
+// ms blocked after hit
+// default 2022-07: 120000
+unsigned long offTime = 120000; // ms blocked - default 120000
 
 // LED
 int ledPin = 9;
@@ -40,16 +42,13 @@ Servo servoC;
 
 // Servo config
 int posLow = 6; // servo 0..180
-int _delay = 350; // ms 
-
-int secondDelay = 720; // ms // second hit
-boolean secondDelayEnabled = !true;
-
 int posHigh = 174;  // servo 0..180
+int _delay = 350; // ms - time to reach highest point
+
+int testMode = 0;
 
 
 RBD::Timer everySecondTimer;
-unsigned long offTime = 80000; // ms blocked
 unsigned long lastHitTimer;
 int everySecond = 0;
 long randNumber;
