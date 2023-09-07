@@ -5,9 +5,10 @@
 /*
 
   SupraSwing
-  2021
+  2021+23
 
   Press btn B (middle) long to start auto test mode
+  2023: Version with 6V switched step down converter
 
 
   Jens Weber
@@ -27,6 +28,9 @@ int ledPin = 9;
 // Sensor
 int sensorPin = 10;
 
+// step down
+int servoPowerPin = 11;
+
 // Buttons
 RBD::Button btnA(2);
 RBD::Button btnB(4);
@@ -41,10 +45,10 @@ Servo servoB;
 Servo servoC;
 
 // Servo config
-int posLow = 6; // servo 0..180
+int posLow = 4; // servo 0..180
 int posHigh = 174;  // servo 0..180
-int _delay = 350; // ms - time to reach highest point
-
+int _delay = 350; // 350 ms - time to reach highest point
+int _delay_off = 300; // time to switch off (vcc + control)
 int testMode = 0;
 
 
@@ -64,6 +68,9 @@ void setup() {
   pinMode (ledPin, OUTPUT);
 
   // servos
+  pinMode (servoPowerPin, OUTPUT);
+  digitalWrite(servoPowerPin, HIGH);
+  delay(100);
   servoA.attach(servoPinA);
   servoB.attach(servoPinB);
   servoC.attach(servoPinC);
@@ -78,6 +85,7 @@ void setup() {
   servoA.detach();
   servoB.detach();
   servoC.detach();
+  digitalWrite(servoPowerPin, LOW);
 }
 
 void loop() {
@@ -155,6 +163,8 @@ void triggerServo(String id) {
   int servoPin = getServoPin(id);
   
   // on
+  digitalWrite(servoPowerPin, HIGH);
+  delay(100);
   servo.attach(servoPin);
   // up and down
   servo.write(posHigh); 
@@ -162,9 +172,10 @@ void triggerServo(String id) {
   servo.write(posLow);
 
   // off
-  delay(_delay + 100);
+  delay(_delay + _delay_off);
   servo.detach();
-
+  digitalWrite(servoPowerPin, LOW);
+  
   Serial.print(">>> ");
   Serial.println(id);
   lastHitTimer = millis();
@@ -177,6 +188,8 @@ void triggerServo2(String id, String id2) {
   int servoPin2 = getServoPin(id2);
   
   // on
+  digitalWrite(servoPowerPin, HIGH);
+  delay(100);
   servo.attach(servoPin);
   servo2.attach(servoPin2);
   // up and down
@@ -187,9 +200,10 @@ void triggerServo2(String id, String id2) {
   servo2.write(posLow);
 
   // off
-  delay(_delay + 100);
+  delay(_delay + _delay_off);
   servo.detach();
   servo2.detach();
+  digitalWrite(servoPowerPin, LOW);
   
   Serial.print(">>> ");
   Serial.print(id);
@@ -199,6 +213,8 @@ void triggerServo2(String id, String id2) {
 
 void triggerServo3() {
   // on
+  digitalWrite(servoPowerPin, HIGH);
+  delay(100);
   servoA.attach(servoPinA);
   servoB.attach(servoPinB);
   servoC.attach(servoPinC);
@@ -212,10 +228,11 @@ void triggerServo3() {
   servoC.write(posLow);
 
   // off
-  delay(_delay + 100);
+  delay(_delay + _delay_off);
   servoA.detach();
   servoB.detach();
   servoC.detach();
+  digitalWrite(servoPowerPin, LOW);
   
   Serial.println(">>> 3x");
   lastHitTimer = millis();
